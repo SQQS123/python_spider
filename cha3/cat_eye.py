@@ -4,6 +4,8 @@ from requests.exceptions import RequestException
 import re
 import time
 
+
+# 请求
 def get_one_page(url):
     try:
         headers = {
@@ -17,6 +19,7 @@ def get_one_page(url):
     except RequestException:
         return None
 
+# 分析一个页面，使用正则表达式
 def parse_one_page(html):
     pattern = re.compile('<dd>.*?board-index.*?>(\d+)</i>.*?data-src="(.*?)".*?name"><a'
                          + '.*?(.*?)</a>.*?star">(.*?)</p>.*?releasetime">(.*?)</p>'

@@ -10,4 +10,3 @@ try:
     print(response.read().decode('utf-8'))
 except URLError as e:
     print(e.reason)
-

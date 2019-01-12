@@ -1,4 +1,6 @@
 import time
+import cv2
+import numpy as np
 from io import BytesIO
 
 from PIL import Image
@@ -24,20 +26,21 @@ class CrackGeetest():
     # 模拟点击
     def get_geetest_button(self):
         button = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_radar_tip')))
-        button.click()
+        # button.click()
         return button
     # 获取一个WebElement对象，调用它的click()方法即可模拟点击
     # button = self.get_geetest_button()
     # button.click()
 
-     # 识别缺口,对B站失效
+     # 识别缺口，这里由于极验网站将刚开始的完整图片移除了，所以，，，这里就需要升级了。
     def get_screenshot(self):
         screenshot = self.browser.get_screenshot_as_png()
         screenshot = Image.open(BytesIO(screenshot))
         return screenshot
 
+
     def get_position(self):
-        img = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'geetest_canvas_img')))
+        img = self.wait.until(EC.presence_of_element_located((By.CLASS_NAME, 'geetest_canvas_slice geetest_absolute')))
         time.sleep(2)
         location = img.location
         size = img.size
@@ -49,8 +52,10 @@ class CrackGeetest():
         print('验证码位置',top,bottom,left,right)
         screenshot = self.get_screenshot()
         captcha = screenshot.crop((left,top,right,bottom))
+        captcha.save(name)
         return captcha
 
+    # 得到滑块，可以
     def get_slider(self):
         slider = self.wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'geetest_slider_button')))
         return slider
@@ -62,7 +67,7 @@ class CrackGeetest():
     def is_pixel_equal(self,image1,image2,x,y):
         pixel1 = image1.load()[x,y]
         pixel2 = image2.load()[x,y]
-        threshold = 150
+        threshold = 60
         if abs(pixel1[0] - pixel2[0]) < threshold and abs(pixel1[1] - pixel2[1]) < threshold and abs(pixel1[2] - pixel2[2]) < threshold:
             return True
         else:
@@ -75,13 +80,14 @@ class CrackGeetest():
         loginuser.send_keys(self.loginusername)
         password.send_keys(self.password)
 
-    def get_gap(self,image1,image2):
+    def get_gap(self,image1):
         left = 60
-        for i in range(left,image1.size[0]):
-            for j in range(image1.size[1]):
-                if not self.is_pixel_equal(image1,image2,i,j):
-                    left = i
-                    return left
+        # for i in range(left,image1.size[0]):
+        #     for j in range(image1.size[1]):
+        #         if not self.is_pixel_equal(image1,image2,i,j):
+        #             left = i
+        #             return left
+        left = 91
         return left
 
     # 模拟拖动
@@ -119,28 +125,34 @@ class CrackGeetest():
     def crack(self):
         self.open()
         button = self.get_geetest_button()
+        print(button)
         button.click()
-        image1 = self.get_geetest_image('captcha1.png')
-        slider = self.get_slider()
-        slider.click()
-        image2 = self.get_geetest_image('captcha2.png')
-        gap = self.get_gap(image1,image2)
-        print('缺口位置',gap)
-        # 减去缺口位移
-        gap -= BORDER
-        track = self.get_track(gap)
-        print('滑动轨迹',track)
-        self.move_to_gap(slider,track)
-
-        success = self.wait.until(
-            EC.text_to_be_present_in_element((By.CLASS_NAME, 'geetest_success_radar_tip_content'),'验证成功')
-        )
-        print(success)
-
-        if not success:
-            self.crack()
-        else:
-            self.login()
+        # 得到图片
+        # image1 = self.get_geetest_image('captcha1.png')
+        # # 得到控制滑块的东西
+        # slider = self.get_slider()
+        # # 点击滑块
+        # # slider.click()
+        # # 得到有缺口的图片（原）
+        # # image2 = self.get_geetest_image('captcha2.png')
+        # # 通过比较两张图片得到位置
+        # gap = self.get_gap(image1)
+        # print('缺口位置',gap)
+        # # 减去缺口位移
+        # gap -= BORDER
+        # track = self.get_track(gap)
+        # print('滑动轨迹',track)
+        # self.move_to_gap(slider,track)
+        #
+        # success = self.wait.until(
+        #     EC.text_to_be_present_in_element((By.CLASS_NAME, 'geetest_success_radar_tip_content'),'验证成功')
+        # )
+        # print(success)
+        #
+        # if not success:
+        #     self.crack()
+        # else:
+        #     self.login()
 
 
 if __name__ == '__main__':

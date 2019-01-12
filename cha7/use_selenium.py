@@ -1,3 +1,5 @@
+import random
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
@@ -9,19 +11,56 @@ from selenium.common.exceptions import NoSuchElementException,TimeoutException
 
 import time
 
+usrname = '17513257267'
+pwd = '741WHITESQ!'
+
 # browser = webdriver.Chrome()
+# browser.get('https://douban.fm/explore/songlists')
 # try:
-#     browser.get('https://www.baidu.com')
-#     input = browser.find_element_by_id('kw')
-#     input.send_keys('Python')
-#     input.send_keys(Keys.ENTER)
-#     wait = WebDriverWait(browser, 10)
-#     wait.until(EC.presence_of_element_located((By.ID, 'content_left')))
-#     print(browser.current_url)
-#     print(browser.get_cookies())
-#     print(browser.page_source)
+#     browser.get('https://douban.fm/explore/songlists')
+    # input = browser.find_element_by_id('kw')
+    # input.send_keys('Python')
+    # input.send_keys(Keys.ENTER)
+    # wait = WebDriverWait(browser, 10)
+    # wait.until(EC.presence_of_element_located((By.ID, 'content_left')))
+    # print(browser.current_url)
+    # print(browser.get_cookies())
+    # print(browser.page_source)
 # finally:
 #     browser.close()
+
+
+browser = webdriver.Chrome()
+try:
+    browser.get('https://www.baidu.com')
+    input = browser.find_element_by_id('kw')
+    input.send_keys('Python')
+    input.send_keys(Keys.ENTER)
+    wait = WebDriverWait(browser, 10)
+    wait.until(EC.presence_of_element_located((By.ID, 'content_left')))
+    button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, 'lb')))
+    button.click()
+    usrnamelg = wait.until(EC.element_to_be_clickable((By.ID,'TANGRAM__PSP_10__footerULoginBtn')))
+    usrnamelg.click()
+
+    # 输入账号
+    usrinpt = wait.until(EC.element_to_be_clickable((By.ID,'TANGRAM__PSP_10__userName')))
+    for i in usrname:
+        usrinpt.send_keys(i)
+        a = random.uniform(0.1, 1)
+        time.sleep(a)
+    pwdinpt = wait.until(EC.element_to_be_clickable((By.ID,'TANGRAM__PSP_10__password')))
+    for i in pwd:
+        pwdinpt.send_keys(i)
+        a = random.uniform(0.1, 1)
+        time.sleep(a)
+    loginbtn = wait.until(EC.element_to_be_clickable((By.ID,'TANGRAM__PSP_10__submit')))
+    loginbtn.click()
+    print(browser.current_url)
+    print(browser.get_cookies())
+    print(browser.page_source)
+except:
+    pass
 
 
 #  详细学习Selenium用法
@@ -29,7 +68,7 @@ import time
 # 也支持无界面浏览器PhantomJS
 
 # 我们可以用如下方式初始化
-ch_browser = webdriver.Chrome()
+# ch_browser = webdriver.Chrome()
 # ff_browser = webdriver.Firefox()
 # edge_browser = webdriver.Edge()
 # ph_browser = webdriver.PhantomJS()
